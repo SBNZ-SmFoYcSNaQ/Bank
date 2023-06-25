@@ -8,14 +8,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @NoArgsConstructor
 @Getter
 @Setter
-@DiscriminatorValue("User")
+@DiscriminatorValue("client")
 public class Client extends User {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
-    private ArrayList<BankAccount> bankAccounts;
+    private List<BankAccount> bankAccounts;
 }

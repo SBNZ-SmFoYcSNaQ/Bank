@@ -8,8 +8,11 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import riders.bank.App;
 import riders.bank.dto.RegisterBodyDTO;
 import riders.bank.exception.EmailExistsException;
+import riders.bank.exception.InvalidDataFormatException;
 import riders.bank.exception.ObjectMappingException;
 import riders.bank.mapper.ObjectsMapper;
 import riders.bank.model.BankingOfficer;
@@ -57,17 +60,35 @@ public class UserService implements UserDetailsService {
         clientRepository.save(client);
     }
 
-    public void registerClient(RegisterBodyDTO registerBodyDTO) throws ObjectMappingException, EmailExistsException {
+    public void registerClient(RegisterBodyDTO registerBodyDTO) throws
+            ObjectMappingException, EmailExistsException, InvalidDataFormatException {
+
         Client client;
         try {
             client = ObjectsMapper.convertRegisterBodyDTOToClient(registerBodyDTO);
         } catch (Exception e) {
+            App.LOGGER.error(e.getMessage());
             throw new ObjectMappingException("user");
         }
+        if (isAnyFieldEmpty(client)){
+            throw new InvalidDataFormatException();
+        }
+
         if (clientRepository.findByEmail(client.getEmail()).isPresent()) {
             throw new EmailExistsException();
         }
         client.setRole(Role.CLIENT);
         saveClient(client);
+    }
+
+    private boolean isAnyFieldEmpty(Client client) {
+        return !StringUtils.hasLength(client.getFirstname()) ||
+                !StringUtils.hasLength(client.getLastname()) ||
+                !StringUtils.hasLength(client.getEmail()) ||
+                !StringUtils.hasLength(client.getPassword()) ||
+                !StringUtils.hasLength(client.getAddress()) ||
+                client.getBirthdate() == null ||
+                !StringUtils.hasLength(client.getPhone()) ||
+                client.getSex() == null;
     }
 }

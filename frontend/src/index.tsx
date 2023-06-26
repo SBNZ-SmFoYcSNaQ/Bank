@@ -4,6 +4,8 @@ import './index.css';
 import reportWebVitals from './reportWebVitals';
 import { RouterProvider } from 'react-router-dom';
 import Router from './Router';
+import 'react-toastify/dist/ReactToastify.css';
+import './shared/interceptors/axios';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement

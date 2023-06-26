@@ -1,11 +1,15 @@
-import { MainLayout } from './shared';
+import { MainLayout, UserContextProvider } from './shared';
 import { Outlet } from 'react-router-dom';
 
 function App() {
   return (
-    <MainLayout>
-      <Outlet />
-    </MainLayout>
+    <>
+      <UserContextProvider>
+        <MainLayout>
+          <Outlet />
+        </MainLayout>
+      </UserContextProvider>
+    </>
   );
 }
 

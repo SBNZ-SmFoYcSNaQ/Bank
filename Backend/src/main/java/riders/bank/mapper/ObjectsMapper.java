@@ -8,7 +8,7 @@ import riders.bank.model.Client;
 public class ObjectsMapper {
     private static final ModelMapper modelMAPPER = new ModelMapper();
 
-    public static Client convertRegisterBodyDTOToClient(RegisterBodyDTO registerBodyDTO) {
+    static {
         PropertyMap<RegisterBodyDTO, Client> answerMap = new PropertyMap<>() {
             @Override
             protected void configure() {
@@ -24,6 +24,9 @@ public class ObjectsMapper {
             }
         };
         modelMAPPER.addMappings(answerMap);
+    }
+
+    public static Client convertRegisterBodyDTOToClient(RegisterBodyDTO registerBodyDTO) {
         return modelMAPPER.map(registerBodyDTO, Client.class);
     }
 }

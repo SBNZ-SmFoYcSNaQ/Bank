@@ -57,7 +57,7 @@ const UserContextProvider = ({ children }: Props) => {
 
     } catch (error: any) {
       console.log(error);
-      if (error.response.request.status === 401) {
+      if (error.response?.request.status === 401) {
         toast.error("Incorrect email or password!");
       } else {
         toast.error("Oops! Something went wrong. Please try again later.");

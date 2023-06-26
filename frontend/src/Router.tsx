@@ -3,6 +3,7 @@ import ErrorPage from "./pages/error-page";
 import Login from "./pages/login";
 import App from "./App";
 import Home from "./pages/home";
+import BankAccount from "./pages/bank-account";
 import Register from "./pages/register";
 
 const Router = createBrowserRouter([
@@ -17,7 +18,11 @@ const Router = createBrowserRouter([
       },
       {
         path: "login",
-        element: <Login />
+        element: <Login/>
+      },
+      {
+        path: "bank-account",
+        element: <BankAccount/>
       },
       {
         path: "register",

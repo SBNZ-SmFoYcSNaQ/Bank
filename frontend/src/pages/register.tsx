@@ -1,11 +1,9 @@
-import { Avatar, Backdrop, Box, Button, CircularProgress, Container, CssBaseline, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, Radio, RadioGroup, TextField, ThemeProvider, Typography, createTheme } from "@mui/material";
+import { Avatar, Backdrop, Box, Button, CircularProgress, Container, CssBaseline, FormControl, FormControlLabel, FormLabel, Grid, InputLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import { useState } from "react";
 import axios from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
-
-const theme = createTheme();
 
 const Register = () => {
   const [gender, setGender] = useState<string>('');
@@ -48,9 +46,9 @@ const Register = () => {
       toast.success("Registration successful!");
 
     } catch (error: any) {
-      if (error.response.request.status === 409) {
+      if (error.response?.request.status === 409) {
         toast.info("Email address is already taken!");
-      } else if (error.response.request.status === 400) {
+      } else if (error.response?.request.status === 400) {
         toast.error("Invalid data format, please provide valid data!");
       } else {
         toast.error("Oops! Something went wrong. Please try again later.");
@@ -62,7 +60,6 @@ const Register = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="xs">
         <CssBaseline />
         <Box
@@ -195,7 +192,6 @@ const Register = () => {
           <CircularProgress color="inherit" />
         </Backdrop>
       </Container>
-    </ThemeProvider>
   )
 }
 

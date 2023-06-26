@@ -1,9 +1,10 @@
-import { AppBar, Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
+import { AppBar, Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeOptions, ThemeProvider, Toolbar, Typography, createTheme } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LogoutIcon from '@mui/icons-material/Logout';
 import { NavLink } from "react-router-dom";
+import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ToastContainer } from "react-toastify";
 import { useContext } from "react";
 import { UserContext, UserContextValue } from "../contexts/UserContext";
@@ -26,6 +27,12 @@ const upperNavItems: NavItem[] = [
     text: "Home",
     icon: <HomeIcon />,
     route: "/home",
+    requireAuth: false
+  },
+  {
+    text: "Bank Account",
+    icon: <AccountBalanceWalletIcon/>,
+    route: "/bank-account",
     requireAuth: true
   }
 ]
@@ -45,23 +52,22 @@ const lowerNavItems: NavItem[] = [
   }
 ]
 
-export default ({ children }: Props) => {
-
+export const MainLayout = ({ children } : Props ) => {
   const { logout, isAuth } = useContext<UserContextValue>(UserContext);
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar
-        position="fixed"
-        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-      >
-        <Toolbar>
-          <Typography variant="h4" noWrap component="div">
-            Bank
-          </Typography>
-        </Toolbar>
-      </AppBar>
+    <CssBaseline />
+    <AppBar
+      position="fixed"
+      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+    >
+      <Toolbar>
+        <Typography variant="h4" noWrap component="div">
+          Bank
+        </Typography>
+      </Toolbar>
+    </AppBar>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -69,7 +75,7 @@ export default ({ children }: Props) => {
           '& .MuiDrawer-paper': {
             width: drawerWidth,
             boxSizing: 'border-box',
-          },
+          }
         }}
         variant="permanent"
         anchor="left"
@@ -77,7 +83,7 @@ export default ({ children }: Props) => {
         <Toolbar />
         <Divider />
         <List>
-          {upperNavItems.map((item) => (
+          {upperNavItems.map((item) => (item.requireAuth === isAuth) && (
             <NavLink to={item.route} key={item.route}>
               <ListItem disablePadding>
                 <ListItemButton>

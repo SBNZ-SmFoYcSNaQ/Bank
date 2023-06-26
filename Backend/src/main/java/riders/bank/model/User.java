@@ -17,7 +17,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @DiscriminatorColumn(name = "user_type", columnDefinition = "VARCHAR(32)")
-public class User {
+public abstract class User {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "id", nullable = false)
@@ -31,4 +31,8 @@ public class User {
     private String phone;
     private Sex sex;
     private LocalDate birthdate;
+
+    public String getRoleAsString() {
+        return role == Role.CLIENT ? "CLIENT" : "BANKING_OFFICER";
+    }
 }

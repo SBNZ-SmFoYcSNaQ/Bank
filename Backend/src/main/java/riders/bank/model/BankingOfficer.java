@@ -6,6 +6,6 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @NoArgsConstructor
-@DiscriminatorValue("BankingOfficer")
+@DiscriminatorValue("banking_officer")
 public class BankingOfficer extends User {
 }

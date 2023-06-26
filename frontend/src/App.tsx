@@ -1,4 +1,4 @@
-import { MainLayout } from './shared';
+import { MainLayout, UserContextProvider } from './shared';
 import { Outlet } from 'react-router-dom';
 import { createTheme } from '@mui/material';
 import { ThemeProvider } from '@emotion/react';
@@ -8,11 +8,13 @@ const customTheme = createTheme(defaultThemeOptions);
 
 function App() {
   return (
-    <ThemeProvider theme={customTheme}>
-      <MainLayout>
-        <Outlet />
-      </MainLayout>
-    </ThemeProvider>
+    <UserContextProvider>
+      <ThemeProvider theme={customTheme}>
+        <MainLayout>
+          <Outlet />
+        </MainLayout>
+      </ThemeProvider>
+    </UserContextProvider>
   );
 }
 

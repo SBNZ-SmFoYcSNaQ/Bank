@@ -5,15 +5,14 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import riders.bank.App;
 import riders.bank.dto.RegisterBodyDTO;
 import riders.bank.exception.EmailExistsException;
+import riders.bank.exception.InvalidDataFormatException;
 import riders.bank.exception.ObjectMappingException;
 import riders.bank.security.AuthUtility;
 import riders.bank.service.UserService;
@@ -37,8 +36,8 @@ public class UserController {
             return new ResponseEntity<>(CREATED);
         } catch (EmailExistsException e) {
             responseObject.put("error", "email address is already taken");
-            return new ResponseEntity<>(responseObject, BAD_REQUEST);
-        } catch (ObjectMappingException e) {
+            return new ResponseEntity<>(responseObject, CONFLICT);
+        } catch (ObjectMappingException | InvalidDataFormatException e) {
             responseObject.put("error", "invalid data format, please provide valid data");
             return new ResponseEntity<>(responseObject, BAD_REQUEST);
         } catch (Exception e) {
@@ -58,6 +57,7 @@ public class UserController {
                 AuthUtility.setResponseMessage(response, "error", "refresh token is missing");
             }
         } catch (Exception e) {
+            App.LOGGER.error(e.getMessage());
             response.setStatus(INTERNAL_SERVER_ERROR.value());
             AuthUtility.setResponseMessage(response, "error", "unknown error");
         }

@@ -1,6 +1,7 @@
-import { Button, Container, Grid, Typography } from "@mui/material";
-import { useState } from "react";
+import { Box, Button, CircularProgress, Container, Grid, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { BankAccount, SingleBankAccount } from "../features/bank-account";
+import { useFetch } from "../shared/index";
 
 const bankAccountsMocked: BankAccount[] = [
   {
@@ -54,7 +55,20 @@ const bankAccountsMocked: BankAccount[] = [
 ]
 
 const BankAccountPages = () => {
-  const [bankAccounts, setBankAccounts] = useState(bankAccountsMocked);
+  const [bankAccounts, setBankAccounts] = useState<BankAccount[] | null>(bankAccountsMocked);
+  const { error, loading, data: bankAccountList} = useFetch<BankAccount[]>(`${process.env.REACT_APP_API_URL}/bankAccounts`);
+
+  // if (loading) return ( 
+  //   <Container sx={{ justifyContent: 'center', mt: '50px'}}>
+  //     <CircularProgress color="inherit" />
+  //   </Container>
+  // )
+
+  // if (error) return (
+  //   <Container sx={{ justifyContent: 'center', mt: '50px'}}>
+  //     <div>{error}</div>
+  //   </Container>
+  // )
 
   return (
     <Container sx={{ py: '12px' }}>
@@ -64,13 +78,16 @@ const BankAccountPages = () => {
           Bank Accounts 
       </Typography>
       <Button variant="contained" sx={{ mb: '50px' }}>Create New Bank Account</Button>
-      <Grid container spacing={3}>
+      { bankAccounts && bankAccounts.length === 0 && <Box>
+        You don't have any accounts yet
+      </Box>}
+      {bankAccounts && bankAccounts.length !== 0 && <Grid container spacing={3}>
         { bankAccounts.map(x => (
           <Grid item xs={12} sm={9} md={8} lg={6} key={x.id}>
             <SingleBankAccount bankAccount={x}/>
           </Grid>
         ))}
-      </Grid>
+      </Grid> }
     </Container>
   )
 }

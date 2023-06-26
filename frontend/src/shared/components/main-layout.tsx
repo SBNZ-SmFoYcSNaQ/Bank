@@ -24,15 +24,15 @@ interface NavItem {
 
 const upperNavItems: NavItem[] = [
   {
-    text: "Bank Account",
-    icon: <AccountBalanceWalletIcon/>,
-    route: "/bank-account",
-    requireAuth: true
-  },
-  {
     text: "Home",
     icon: <HomeIcon />,
     route: "/home",
+    requireAuth: false
+  },
+  {
+    text: "Bank Account",
+    icon: <AccountBalanceWalletIcon/>,
+    route: "/bank-account",
     requireAuth: true
   }
 ]
@@ -83,7 +83,7 @@ export const MainLayout = ({ children } : Props ) => {
         <Toolbar />
         <Divider />
         <List>
-          {upperNavItems.map((item) => (
+          {upperNavItems.map((item) => (item.requireAuth === isAuth) && (
             <NavLink to={item.route} key={item.route}>
               <ListItem disablePadding>
                 <ListItemButton>

@@ -40,10 +40,10 @@ const SingleBankAccount = ({ bankAccount }: Props) => {
       }}>
       <Grid container spacing={1} sx={{ letterSpacing: '1px'}}>
         <Grid container sx={{ justifyContent: 'right', mb: '26px', alignItems: 'center' }}>
-          <Grid container xs={6} sx={{ alignItems: 'center' }}>
+          <Grid container item xs={6} sx={{ alignItems: 'center' }}>
             <span style={{ letterSpacing: '1.5px', fontWeight: 'bold', fontSize: '1.4rem', marginRight: '3px'}}>{bankAccount.balance}</span>RSD
           </Grid>
-          <Grid container xs={6} sx={{ justifyContent: 'right', alignItems: 'center' }}>
+          <Grid container item xs={6} sx={{ justifyContent: 'right', alignItems: 'center' }}>
             <img src={bankImg} alt="bank" style={{
               width: '40px',
               height: '40px',
@@ -63,12 +63,12 @@ const SingleBankAccount = ({ bankAccount }: Props) => {
            <span style={{ letterSpacing: '3px', fontWeight: 'bold' }}>{ formatCardNumber(bankAccount.bankCard?.number) }</span>
         </Grid>
         <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
-          <Grid container xs={6} sx={{ fontSize: '0.85rem'}}>
+          <Grid container item xs={6} sx={{ fontSize: '0.85rem'}}>
             <span style={{ color: '#aaa' }}>cvc</span> 
             <span style={{ fontWeight: 'bold', marginLeft: '4px'}}>{bankAccount.bankCard?.cvv_cvc}</span>
           </Grid>
-          <Grid container xs={5} sx={{ fontSize: '0.65rem' }}>
-            <Stack direction="column" sx={{ lineHeight: '0.5rem', mr: '8px', color: '#aaa'}}> 
+          <Grid container item xs={5} sx={{ fontSize: '0.65rem', alignItems: 'center' }}>
+            <Stack direction="column" sx={{ lineHeight: '0.6rem', mr: '8px', color: '#aaa'}}> 
               <span>VALID</span>
               <span>THRU</span>
             </Stack>
@@ -76,13 +76,13 @@ const SingleBankAccount = ({ bankAccount }: Props) => {
           </Grid>
         </Grid>
         <Grid container sx={{ ml: '8px', alignItems: 'end' }}>
-          <Grid container xs={6} sx={{ alignItems: 'end'}}>
+          <Grid container item xs={6} sx={{ alignItems: 'end'}}>
             <Stack direction="column">
               <span>{bankAccount.bankCard?.ownerName  }</span>
               <span>{bankAccount.number}</span>
             </Stack>
           </Grid>
-          <Grid container xs={6} sx={{ justifyContent: 'right'}}>
+          <Grid container item xs={6} sx={{ justifyContent: 'right'}}>
             <Stack direction="column">
               <img src={fakeMasterCardImg} alt="fake master card" style={{
                 width: '80px',

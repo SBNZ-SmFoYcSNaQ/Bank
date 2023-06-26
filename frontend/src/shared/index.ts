@@ -12,10 +12,10 @@ export {
 
 export type { 
   Client,
-   BankingOfficer, 
-   Role, 
-   Sex, 
-   UserContextValue 
+  BankingOfficer, 
+  Role, 
+  Sex, 
+  UserContextValue 
 }
 
 

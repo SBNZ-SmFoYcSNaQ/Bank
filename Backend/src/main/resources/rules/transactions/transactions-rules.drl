@@ -11,40 +11,47 @@ global riders.bank.model.Client specificClient;
 global java.util.ArrayList<String> suspiciousMessages;
 
 rule "Rule [Many transactions from different locations in close time]"
+agenda-group "ruleOne"
 salience 50
 no-loop true
 when
     $transaction: Transaction(id == specificTransaction.getId())
+    $transactionHelper: TransactionsHelper()
     $otherTransactions: List(size > 0) from collect(Transaction(id != specificTransaction.getId()))
-    $userTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getClientTransactions($otherTransactions, specificClient.getId()))
-    $closeTimeTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getTimeCloseTransactions($userTransactions, $transaction))
-    $longDistanceCloseTimeTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getLongDistanceTransactions($closeTimeTransactions, $transaction))
+    $userTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getClientTransactions($otherTransactions, specificClient.getId()))
+    $closeTimeTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getTimeCloseTransactions($userTransactions, $transaction))
+    $longDistanceCloseTimeTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getLongDistanceTransactions($closeTimeTransactions, $transaction))
 then
     System.out.println("Rule [Many transactions from different locations in close time] - fired");
     suspiciousMessages.add("Many transactions from different locations in close time.");
 end;
 
 rule "Rule [Many small transactions in close time]"
+agenda-group "ruleTwo"
 salience 45
 no-loop true
 when
     $transaction: Transaction(id == specificTransaction.getId())
+    $transactionHelper: TransactionsHelper()
     $otherTransactions: List(size > 0) from collect(Transaction(id != specificTransaction.getId()))
-    $userTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getClientTransactions($otherTransactions, specificClient.getId()))
-    $manySmallTransactions: List(size > 5) from collect(Transaction() from TransactionsHelper.getSmallTransactions($userTransactions))
+    $userTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getClientTransactions($otherTransactions, specificClient.getId()))
+    $closeTimeTransactions: List(size > 5) from collect(Transaction() from $transactionHelper.getTimeCloseTransactions($userTransactions, $transaction))
+    $manySmallTransactions: List(size > 5) from collect(Transaction() from $transactionHelper.getSmallTransactions($closeTimeTransactions))
 then
     System.out.println("Rule [Many small transactions in close time] - fired");
     suspiciousMessages.add("Many small transactions in close time.");
 end;
 
 rule "Rule [Transactions from new location]"
+agenda-group "ruleThree"
 salience 40
 no-loop true
 when
     $transaction: Transaction(id == specificTransaction.getId())
+    $transactionHelper: TransactionsHelper()
     $otherTransactions: List(size > 0) from collect(Transaction(id != specificTransaction.getId()))
-    $userTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getClientTransactions($otherTransactions, specificClient.getId()))
-    $isFromNewLocation: Boolean() from TransactionsHelper.isTransactionFromNewLocations($userTransactions, $transaction.getLocation())
+    $userTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getClientTransactions($otherTransactions, specificClient.getId()))
+    $isFromNewLocation: Boolean() from $transactionHelper.isTransactionFromNewLocations($userTransactions, $transaction.getLocation())
     eval($isFromNewLocation == true)
 then
     System.out.println("Rule [Transactions from new location] - fired");
@@ -52,11 +59,13 @@ then
 end;
 
 rule "Rule [Big transaction in odd time]"
+agenda-group "ruleFour"
 salience 35
 no-loop true
 when
     $transaction: Transaction(id == specificTransaction.getId())
-    $isOddTransaction: Boolean() from TransactionsHelper.isTransactionOdd($transaction)
+    $transactionHelper: TransactionsHelper()
+    $isOddTransaction: Boolean() from $transactionHelper.isTransactionOdd($transaction)
     eval($isOddTransaction == true)
 then
     System.out.println("Rule [Big transaction in odd time] - fired");
@@ -64,14 +73,16 @@ then
 end;
 
 rule "Rule [Oddly big transaction than usually]"
+agenda-group "ruleFive"
 salience 30
 no-loop true
 when
     $transaction: Transaction(id == specificTransaction.getId())
+    $transactionHelper: TransactionsHelper()
     $otherTransactions: List(size > 0) from collect(Transaction(id != specificTransaction.getId()))
-    $userTransactions: List(size > 0) from collect(Transaction() from TransactionsHelper.getClientTransactions($otherTransactions, specificClient.getId()))
-    $meanTransactionAmount: Double() from TransactionsHelper.getMeanTransactionAmount($userTransactions)
-    eval($meanTransactionAmount > $transaction.getAmount() * 2)
+    $userTransactions: List(size > 0) from collect(Transaction() from $transactionHelper.getClientTransactions($otherTransactions, specificClient.getId()))
+    $meanTransactionAmount: Double() from $transactionHelper.getMeanTransactionAmount($userTransactions)
+    eval($meanTransactionAmount * 3 < $transaction.getAmount())
 then
     System.out.println("Rule [Oddly big transaction than usually] - fired");
     suspiciousMessages.add("Transaction is much larger than average.");

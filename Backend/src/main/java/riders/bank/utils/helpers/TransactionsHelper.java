@@ -1,6 +1,7 @@
 package riders.bank.utils.helpers;
 
 import com.maxmind.geoip2.exception.GeoIp2Exception;
+import lombok.NoArgsConstructor;
 import riders.bank.model.BankAccount;
 import riders.bank.model.Transaction;
 import riders.bank.utils.LocationUtils;
@@ -16,11 +17,12 @@ import java.util.UUID;
 
 import static java.time.temporal.ChronoUnit.DAYS;
 
+@NoArgsConstructor
 public class TransactionsHelper {
 
-    private static final double smallTransactionAmmount = 1500;
-    private static final double bigTransactionAmmount = 10000;
-    public static List<Transaction> getTimeCloseTransactions(List<Transaction> otherTransactions, Transaction specificTransaction){
+    private static final double smallTransactionAmount = 1500;
+    private static final double bigTransactionAmount = 10000;
+    public List<Transaction> getTimeCloseTransactions(List<Transaction> otherTransactions, Transaction specificTransaction){
         List<Transaction> transactionsToReturn = new ArrayList<>();
         for(Transaction transaction : otherTransactions){
             if(isCloseTimeTransactions(transaction, specificTransaction)){
@@ -30,7 +32,7 @@ public class TransactionsHelper {
         return transactionsToReturn;
     }
 
-    public static List<Transaction> getLongDistanceTransactions(List<Transaction> otherTransactions, Transaction specificTransaction) throws IOException, GeoIp2Exception {
+    public List<Transaction> getLongDistanceTransactions(List<Transaction> otherTransactions, Transaction specificTransaction) throws IOException, GeoIp2Exception {
         List<Transaction> transactionsToReturn = new ArrayList<>();
         for(Transaction transaction : otherTransactions){
             if(!LocationUtils.isSameCountry(transaction.getLocation(), specificTransaction.getLocation())){
@@ -40,7 +42,7 @@ public class TransactionsHelper {
         return transactionsToReturn;
     }
 
-    public static List<Transaction> getClientTransactions(List<Transaction> otherTransactions, UUID clienId){
+    public List<Transaction> getClientTransactions(List<Transaction> otherTransactions, UUID clienId){
         List<Transaction> transactionsToReturn = new ArrayList<>();
         for (Transaction transaction: otherTransactions) {
             if(transaction.getBankAccount().getClient().getId().equals(clienId))
@@ -49,16 +51,16 @@ public class TransactionsHelper {
         return transactionsToReturn;
     }
 
-    public static List<Transaction> getSmallTransactions(List<Transaction> transactions) {
+    public List<Transaction> getSmallTransactions(List<Transaction> transactions) {
         List<Transaction> transactionsToReturn = new ArrayList<>();
         for (Transaction transaction: transactions) {
-            if(transaction.getAmount() < smallTransactionAmmount)
+            if(transaction.getAmount() < smallTransactionAmount)
                 transactionsToReturn.add(transaction);
         }
         return transactionsToReturn;
     }
 
-    public static Boolean isTransactionFromNewLocations(List<Transaction> transactions, String currentLocation) {
+    public Boolean isTransactionFromNewLocations(List<Transaction> transactions, String currentLocation) {
         for (Transaction transaction: transactions) {
             if(transaction.getLocation().equals(currentLocation))
                 return false;
@@ -66,11 +68,11 @@ public class TransactionsHelper {
         return true;
     }
 
-    public static Boolean isTransactionOdd(Transaction transaction) {
-        return transaction.getAmount() > bigTransactionAmmount && isOddTime(transaction.getCreationTime());
+    public Boolean isTransactionOdd(Transaction transaction) {
+        return transaction.getAmount() > bigTransactionAmount && isOddTime(transaction.getCreationTime());
     }
 
-    public static Double getMeanTransactionAmount(List<Transaction> transactions) {
+    public Double getMeanTransactionAmount(List<Transaction> transactions) {
         double meanValue = 0.0;
         for (Transaction transaction:transactions) {
             meanValue += transaction.getAmount();
@@ -78,13 +80,13 @@ public class TransactionsHelper {
         return meanValue/transactions.size();
     }
 
-    private static Boolean isOddTime(LocalDateTime time) {
+    private Boolean isOddTime(LocalDateTime time) {
         LocalTime localTime = time.toLocalTime();
         int hour = localTime.getHour();
         return hour >= 1 && hour <= 5;
     }
 
-    private static boolean isCloseTimeTransactions(Transaction transactionOne, Transaction transactionTwo) {
+    private boolean isCloseTimeTransactions(Transaction transactionOne, Transaction transactionTwo) {
         return DAYS.between(transactionOne.getCreationTime(), transactionTwo.getCreationTime()) <= 1;
     }
 }

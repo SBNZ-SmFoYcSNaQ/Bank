@@ -16,6 +16,7 @@ import riders.bank.model.BankCard;
 import riders.bank.model.SuspiciousTransaction;
 import riders.bank.model.Transaction;
 import riders.bank.repository.TransactionRepository;
+import riders.bank.utils.helpers.TransactionsHelper;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -52,6 +53,8 @@ public class TransactionService {
         for(BankAccount bankAccountIter : allBankAccounts) {
             kieSession.insert(bankAccountIter);
         }
+        TransactionsHelper transactionHelper = new TransactionsHelper();
+        kieSession.insert(transactionHelper);
         kieSession.fireAllRules();
 
         if(suspiciousMessages.size() > 0) {

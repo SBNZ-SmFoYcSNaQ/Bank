@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -20,7 +20,7 @@ public class BankCard {
     @Column(name = "id", nullable = false)
     private UUID id;
     private String number;
-    private LocalDateTime expirationDate;
+    private LocalDate expirationDate;
     private String ownerName;
-    private String cvv_cvc;
+    private String cvvCvc;
 }

@@ -75,6 +75,7 @@ const UserContextProvider = ({ children }: Props) => {
       setUser(null);
       setIsAuth(false);
       localStorage.removeItem('2w3e8oi9pjuthyf4');
+      navigate('/login');
       toast.success("Logged out!");
     }
   }

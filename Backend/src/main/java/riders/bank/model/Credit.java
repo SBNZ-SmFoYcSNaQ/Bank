@@ -27,7 +27,7 @@ public class Credit {
     @Column(name = "id", nullable = false)
     private UUID id;
     private double amount;
-    private int creditPaymentsNumber;
+    private int paymentsNumber;
     private LocalDateTime minimumRepaymentPeriod;
     private LocalDateTime maximumRepaymentPeriod;
     private Status status;

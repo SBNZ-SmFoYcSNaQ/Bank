@@ -5,6 +5,7 @@ import App from "./App";
 import Home from "./pages/home";
 import BankAccount from "./pages/bank-account";
 import Register from "./pages/register";
+import ApplicationForCredit from "./pages/application-for-credit";
 
 const Router = createBrowserRouter([
   {
@@ -27,6 +28,10 @@ const Router = createBrowserRouter([
       {
         path: "register",
         element: <Register />
+      },
+      {
+        path: "application-for-credit",
+        element: <ApplicationForCredit />
       }
     ]
   }

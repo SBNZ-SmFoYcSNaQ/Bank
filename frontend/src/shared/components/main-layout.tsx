@@ -1,8 +1,9 @@
-import { AppBar, Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, ThemeOptions, ThemeProvider, Toolbar, Typography, createTheme } from "@mui/material";
+import { AppBar, Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar, Typography } from "@mui/material";
 import HomeIcon from '@mui/icons-material/Home';
 import LoginIcon from '@mui/icons-material/Login';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LogoutIcon from '@mui/icons-material/Logout';
+import CreditScoreIcon from '@mui/icons-material/CreditScore';
 import { NavLink } from "react-router-dom";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ToastContainer } from "react-toastify";
@@ -20,6 +21,7 @@ interface NavItem {
   icon: JSX.Element;
   route: string;
   requireAuth: boolean;
+  roles?: string[];
 }
 
 const upperNavItems: NavItem[] = [
@@ -31,9 +33,17 @@ const upperNavItems: NavItem[] = [
   },
   {
     text: "Bank Account",
-    icon: <AccountBalanceWalletIcon/>,
+    icon: <AccountBalanceWalletIcon />,
     route: "/bank-account",
-    requireAuth: true
+    requireAuth: true,
+    roles: ["CLIENT"]
+  },
+  {
+    text: "Application For Credit",
+    icon: <CreditScoreIcon />,
+    route: "/application-for-credit",
+    requireAuth: true,
+    roles: ["CLIENT"]
   }
 ]
 
@@ -52,22 +62,22 @@ const lowerNavItems: NavItem[] = [
   }
 ]
 
-export const MainLayout = ({ children } : Props ) => {
-  const { logout, isAuth } = useContext<UserContextValue>(UserContext);
+export const MainLayout = ({ children }: Props) => {
+  const { logout, isAuth, user } = useContext<UserContextValue>(UserContext);
 
   return (
     <Box sx={{ display: 'flex' }}>
-    <CssBaseline />
-    <AppBar
-      position="fixed"
-      sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
-    >
-      <Toolbar>
-        <Typography variant="h4" noWrap component="div">
-          Bank
-        </Typography>
-      </Toolbar>
-    </AppBar>
+      <CssBaseline />
+      <AppBar
+        position="fixed"
+        sx={{ width: `calc(100% - ${drawerWidth}px)`, ml: `${drawerWidth}px` }}
+      >
+        <Toolbar>
+          <Typography variant="h4" noWrap component="div">
+            Bank
+          </Typography>
+        </Toolbar>
+      </AppBar>
       <Drawer
         sx={{
           width: drawerWidth,
@@ -83,7 +93,7 @@ export const MainLayout = ({ children } : Props ) => {
         <Toolbar />
         <Divider />
         <List>
-          {upperNavItems.map((item) => (item.requireAuth === isAuth) && (
+          {upperNavItems.map((item) => (item.requireAuth === isAuth) && (!item.roles || item.roles.includes(user.role)) && (
             <NavLink to={item.route} key={item.route}>
               <ListItem disablePadding>
                 <ListItemButton>

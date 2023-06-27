@@ -35,7 +35,7 @@ public class AuthUtility {
     private final UserService userService;
 
     private String getRefreshToken(HttpServletRequest request) {
-        if (request.getCookies().length == 0) {
+        if (request.getCookies() == null) {
             App.LOGGER.info("Cookie list is empty");
             return null;
         }

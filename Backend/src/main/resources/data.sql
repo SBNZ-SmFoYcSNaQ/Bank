@@ -24,7 +24,7 @@ VALUES
     ('07e8e1a1-6e3d-4a03-81f4-b3086a99e09e', '345', '2024-05-06', '6011000990139424', 'Client Client'),
     ('dcd90a3e-ebd6-4b3e-918f-69e275d06ef9', '678', '2023-10-22', '3530111333300000', 'Client6 Client6');
 
-INSERT INTO credit (id, amount, credit_payments_number, maximum_repayment_period, minimum_repayment_period, status) VALUES
+INSERT INTO credit (id, amount, payments_number, maximum_repayment_period, minimum_repayment_period, status) VALUES
     ('7914c91a-139f-11ee-be56-0242ac120002', 350000, 24, '2026-04-10 10:39:37', '2024-04-10 10:39:37', 1),
     ('3e4e0d59-3d63-4b20-b24e-3dd5d8a33a52', 500000, 36, '2027-01-15 09:30:45', '2024-01-15 09:30:45', 0),
     ('8faef9a7-85b1-4c0b-8d94-eeff28ee228d', 200000, 12, '2026-11-02 14:20:18', '2024-11-02 14:20:18', 1),

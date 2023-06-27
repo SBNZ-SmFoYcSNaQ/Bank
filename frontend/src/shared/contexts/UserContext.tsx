@@ -67,11 +67,16 @@ const UserContextProvider = ({ children }: Props) => {
     }
   }
 
-  const logout = () => {
-    setUser(null);
-    setIsAuth(false);
-    localStorage.removeItem('2w3e8oi9pjuthyf4');
-    toast.success("Logged out!");
+  const logout = async () => {
+    try {
+      await axios.post(`logout`, null, { withCredentials: true })
+    } catch (err) {
+    } finally {
+      setUser(null);
+      setIsAuth(false);
+      localStorage.removeItem('2w3e8oi9pjuthyf4');
+      toast.success("Logged out!");
+    }
   }
 
   const value = {

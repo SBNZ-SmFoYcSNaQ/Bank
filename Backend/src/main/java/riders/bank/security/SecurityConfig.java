@@ -75,7 +75,8 @@ public class SecurityConfig {
         httpSecurity.authorizeHttpRequests().requestMatchers(
                 "/api/login",
                 "/api/token/refresh",
-                "/api/register"
+                "/api/register",
+                "/api/logout"
         ).permitAll();
         httpSecurity.authorizeHttpRequests().anyRequest().authenticated();
         httpSecurity.addFilter(customAuthenticationFilter);

@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.UUID;
 
 @Entity
@@ -28,7 +28,24 @@ public class Credit {
     private UUID id;
     private double amount;
     private int paymentsNumber;
-    private LocalDateTime minimumRepaymentPeriod;
-    private LocalDateTime maximumRepaymentPeriod;
+    private LocalDate minimumRepaymentPeriod;
+    private LocalDate maximumRepaymentPeriod;
     private Status status;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    private EmploymentInfo employmentInfo;
+    @ManyToOne
+    private Client client;
+    
+    @Transient
+    private boolean isRecommended;
+
+    public Credit(double amount, int paymentsNumber, LocalDate minimumRepaymentPeriod, LocalDate maximumRepaymentPeriod, Status status, EmploymentInfo employmentInfo, Client client) {
+        this.amount = amount;
+        this.paymentsNumber = paymentsNumber;
+        this.minimumRepaymentPeriod = minimumRepaymentPeriod;
+        this.maximumRepaymentPeriod = maximumRepaymentPeriod;
+        this.status = status;
+        this.employmentInfo = employmentInfo;
+        this.client = client;
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import riders.bank.App;
+import riders.bank.dto.ClientDTO;
 import riders.bank.dto.RegisterBodyDTO;
 import riders.bank.exception.EmailExistsException;
 import riders.bank.exception.InvalidDataFormatException;
@@ -24,6 +25,7 @@ import riders.bank.repository.ClientRepository;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -32,6 +34,21 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final ClientRepository clientRepository;
     private final BankingOfficerRepository bankingOfficerRepository;
+
+
+    public List<ClientDTO> getAllClientDTOs() {
+        List<Client> clients = clientRepository.findAll();
+
+        return convertClientsToClientDTOS(clients);
+    }
+
+    private List<ClientDTO> convertClientsToClientDTOS(List<Client> clients) {
+        List<ClientDTO> clientDTOS = new ArrayList<>();
+        for (var client: clients) {
+            clientDTOS.add(new ClientDTO(client.getId(), client.getFirstname() + " " + client.getLastname()));
+        }
+        return clientDTOS;
+    }
 
     public User getUserBy(String email) throws UsernameNotFoundException {
         Client client = clientRepository.findByEmail(email).orElse(null);

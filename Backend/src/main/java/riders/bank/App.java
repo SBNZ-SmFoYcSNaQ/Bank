@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import riders.bank.mapper.ObjectsMapper;
 
 @SpringBootApplication
 @EnableScheduling
@@ -20,6 +21,7 @@ public class App
     public static void main( String[] args )
     {
         SpringApplication.run(App.class, args);
+        ObjectsMapper.initializeObjectMapper();
     }
 
     @Bean

@@ -2,64 +2,37 @@ package com.sample.rules;
 
 import riders.bank.model.Credit;
 import riders.bank.model.Client;
+import java.time.LocalDate;
 
-query suitableMatch(String $candidateName, String $position)
-    credit: Credit() and
-
-    fulfilsIncomeRequirement() and
-
-    $jobOffer: JobOffer( $position; ) and
-    $candidate: Candidate( $candidateName; ) and
-    fulfilsEducationRequirement( $candidateName, $position; ) and
-    fulfilsSkillsRequirement( $candidateName, $position; )
+query suitableMatch( Credit $credit )
+    fulfilsStableIncomeRequirement ( $credit; ) and
+    fulfilsIncomeSizeRequirement( $credit; ) and
+    isClientNotInRiskGroup ( $credit; )
 end
 
-query fulfilsIncomeRequirement(Credit $credit)
-    $client: Client()
-    eval($credit.employmentInfo.salary > 0)
+query fulfilsStableIncomeRequirement( Credit $credit )
+    eval($credit.getEmploymentInfo().getEmploymentEndDate().isAfter($credit.getMaximumRepaymentPeriod()))
+end
+
+query fulfilsIncomeSizeRequirement( Credit $credit )
+    eval($credit.getEmploymentInfo().getSalary() >= 0.5 * $credit.getAmount())
+end
+
+query isClientNotInRiskGroup( Credit $credit )
+    eval($credit.getClient().getBirthdate().isAfter(LocalDate.now().minusYears(65)))
 end
 
 
+//query hasRepaymentPeriod( Credit $credit )
+//    eval($credit.getMinimumRepaymentPeriod() != null && $credit.getMaximumRepaymentPeriod != null)
+//end
 
-query isClientInRiskGroup( Client $client )
-
-end
-
-// za obrazovanje treba da ispuni barem jedan od uslova te pozicije za posao
-query fulfilsEducationRequirement( String $candidateName, String $position )
-    noRequirements( $position, RequirementType.EDUCATION; ) or
-    (
-        $c: Candidate( $candidateName; ) and
-        $r: Requirement( $position, RequirementType.EDUCATION; ) and
-        Number(intValue > 0) from accumulate(
-            String($e: this, $r.requirements contains this)
-            from $c.education,
-            count($e)
-        )
-    )
-end
-
-// za vestine treba da ispuni sve uslove te pozicije za posao
-query fulfilsSkillsRequirement( String $candidateName, String $position )
-    noRequirements( $position, RequirementType.SKILLS; ) or
-    (
-        $c: Candidate( $candidateName; ) and
-        $r: Requirement( $position, RequirementType.SKILLS; ) and
-        Number(intValue == $r.requirements.size()) from accumulate(
-            String($e: this, $r.requirements contains this)
-            from $c.skills,
-            count($e)
-        )
-    )
-end
-
-query noRequirements( String $position, RequirementType $type )
-    not(exists(Requirement( $position, $type; )))
-end
-
-rule "find suitable job candidates"
+rule "is client suitable for credit"
+no-loop true
 when
-    suitableMatch( $name, $position; )
+    $credit: Credit()
+    suitableMatch( $credit; )
 then
-    System.out.println("Candidate " + $name + " is suitable for position " + $position);
+    System.out.println("Client " + $credit.getClient() + " is suitable");
+    $credit.setRecommended(true);
 end

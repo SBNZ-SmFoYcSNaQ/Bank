@@ -59,7 +59,7 @@ public class AuthUtility {
     public static String createAccessJWT(String subject, String claim, HttpServletRequest request) {
         return JWT.create()
                 .withSubject(subject)
-                .withExpiresAt(new Date(System.currentTimeMillis() + 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + 14 * 24 * 60 * 1000))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("role", claim)
                 .sign(getAlgorithm());

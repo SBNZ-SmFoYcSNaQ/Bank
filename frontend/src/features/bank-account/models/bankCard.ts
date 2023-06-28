@@ -1,9 +1,9 @@
 interface BankCard {
   id?: string;
   number?: string;
-  expirationDate?: Date;
+  expirationDate?: string;
   ownerName?: string;
-  cvv_cvc?: string;
+  cvvCvc?: string;
 }
 
 export type { BankCard }

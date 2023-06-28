@@ -28,6 +28,14 @@ function formatCardNumber(number: string | undefined): string {
   return number.replace(/(.{4})/g, '$1  ')
 }
 
+function getDateComponent(date: string | undefined, idx: number): number {
+  if (!date || idx > 2) return -1;
+
+  const parts = date.split("-");
+
+  return Number.parseInt(parts[idx]);
+}
+
 const SingleBankAccount = ({ bankAccount }: Props) => {
   return (
     <Paper 
@@ -65,14 +73,14 @@ const SingleBankAccount = ({ bankAccount }: Props) => {
         <Grid container sx={{ justifyContent: 'center', alignItems: 'center' }}>
           <Grid container item xs={6} sx={{ fontSize: '0.85rem'}}>
             <span style={{ color: '#aaa' }}>cvc</span> 
-            <span style={{ fontWeight: 'bold', marginLeft: '4px'}}>{bankAccount.bankCard?.cvv_cvc}</span>
+            <span style={{ fontWeight: 'bold', marginLeft: '4px'}}>{bankAccount.bankCard?.cvvCvc}</span>
           </Grid>
           <Grid container item xs={5} sx={{ fontSize: '0.65rem', alignItems: 'center' }}>
             <Stack direction="column" sx={{ lineHeight: '0.6rem', mr: '8px', color: '#aaa'}}> 
               <span>VALID</span>
               <span>THRU</span>
             </Stack>
-            {getMonthFormatted(bankAccount.bankCard?.expirationDate?.getMonth())} / {bankAccount.bankCard?.expirationDate?.getFullYear()}
+            {getMonthFormatted(getDateComponent(bankAccount.bankCard?.expirationDate, 1))} / {getDateComponent(bankAccount.bankCard?.expirationDate, 2)}
           </Grid>
         </Grid>
         <Grid container sx={{ ml: '8px', alignItems: 'end' }}>

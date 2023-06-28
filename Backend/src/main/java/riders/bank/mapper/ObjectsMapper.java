@@ -8,8 +8,10 @@ import riders.bank.model.Client;
 public class ObjectsMapper {
     private static final ModelMapper modelMAPPER = new ModelMapper();
 
-    static {
-        PropertyMap<RegisterBodyDTO, Client> answerMap = new PropertyMap<>() {
+    private ObjectsMapper() {}
+
+    public static void initializeObjectMapper() {
+        PropertyMap<RegisterBodyDTO, Client> registerBodyDTOtoClientMap = new PropertyMap<>() {
             @Override
             protected void configure() {
                 skip(destination.getId());
@@ -23,10 +25,12 @@ public class ObjectsMapper {
                 map().setBirthdate(source.getBirthdate());
             }
         };
-        modelMAPPER.addMappings(answerMap);
+
+        modelMAPPER.addMappings(registerBodyDTOtoClientMap);
     }
 
     public static Client convertRegisterBodyDTOToClient(RegisterBodyDTO registerBodyDTO) {
         return modelMAPPER.map(registerBodyDTO, Client.class);
     }
+
 }

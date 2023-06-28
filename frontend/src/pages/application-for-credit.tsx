@@ -1,13 +1,31 @@
-import { Box, Button, Checkbox, FormControl, FormControlLabel, FormGroup, FormLabel, Radio, RadioGroup, TextField, Typography } from "@mui/material";
-import { useState } from "react";
+import {
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Modal,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material";
+import axios from "axios";
+import { useEffect, useState } from "react";
 
 interface CreditFormValues {
+  userId: number;
   amount: number;
   paymentsNumber: number;
   minRepaymentPeriod: string;
   maxRepaymentPeriod: string;
   areYouEmployed?: boolean;
-  employmentEndDateOption: EmploymentEndDateOptions,
+  employmentEndDateOption: EmploymentEndDateOptions;
   employmentStartDate?: string;
   employmentEndDate?: string;
   salary?: number;
@@ -19,6 +37,7 @@ enum EmploymentEndDateOptions {
 }
 
 const initalFormValues: CreditFormValues = {
+  userId: 0,
   amount: 0,
   paymentsNumber: 0,
   minRepaymentPeriod: "",
@@ -27,11 +46,37 @@ const initalFormValues: CreditFormValues = {
   employmentEndDateOption: EmploymentEndDateOptions.Indefinite,
   employmentStartDate: "",
   employmentEndDate: "",
-  salary: 0
+  salary: 0,
+};
+
+interface User {
+  id: number;
+  fullName: string;
 }
 
+const style = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  boxShadow: 24,
+  p: 4,
+};
+
 const ApplicationForCredit = () => {
-  const [formValues, setFormValues] = useState<CreditFormValues>(initalFormValues);
+  const [formValues, setFormValues] =
+    useState<CreditFormValues>(initalFormValues);
+  const [backdrop, setBackdrop] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [users, setUsers] = useState<User[]>([]);
+  const [eligibility, setEligibility] = useState("");
+
+  const handleOpen = () => setOpen(true);
+
+  const handleClose = () => setOpen(false);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -42,11 +87,38 @@ const ApplicationForCredit = () => {
     }));
   };
 
+  // const handleUserChange = () => {
+  //   setFormValues((prevValues) => ({
+  //     ...prevValues,
+  //     userId: value.userId
+  //   }));
+
+  // }
+
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
+    setBackdrop(true);
 
-    const { areYouEmployed, employmentEndDateOption, ...filteredFormValues } = formValues;
+    const { areYouEmployed, employmentEndDateOption, ...filteredFormValues } =
+      formValues;
     console.log(filteredFormValues);
+
+    //axios request
+
+    setBackdrop(false);
+  };
+
+  useEffect(() => {
+    fetchUsers();
+  }, []);
+
+  const fetchUsers = async () => {
+    try {
+      const response = await axios.get(`clients`);
+      setUsers(response.data);
+    } catch (error) {
+      console.error("Error fetching users:", error);
+    }
   };
 
   return (
@@ -55,6 +127,24 @@ const ApplicationForCredit = () => {
         Application
       </Typography>
       <form onSubmit={handleSubmit}>
+        <FormControl fullWidth margin="normal">
+          <Autocomplete
+            disablePortal
+            options={users}
+            getOptionLabel={(option) => option.fullName}
+            onChange={(event: any, newValue: User | null) => {
+              setFormValues({ ...formValues, userId: newValue?.id ?? -1 });
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="userId"
+                label="Choose client"
+                required
+              />
+            )}
+          />
+        </FormControl>
         <FormControl fullWidth margin="normal">
           <TextField
             name="amount"
@@ -105,7 +195,7 @@ const ApplicationForCredit = () => {
               onChange={handleChange}
             />
           }
-          label="Are you employed?"
+          label="Employed?"
         />
         {formValues.areYouEmployed && (
           <>
@@ -140,7 +230,8 @@ const ApplicationForCredit = () => {
                 />
               </RadioGroup>
 
-              {formValues.employmentEndDateOption === EmploymentEndDateOptions.SpecificDate && (
+              {formValues.employmentEndDateOption ===
+                EmploymentEndDateOptions.SpecificDate && (
                 <TextField
                   InputLabelProps={{ shrink: true }}
                   name="employmentEndDate"
@@ -165,12 +256,34 @@ const ApplicationForCredit = () => {
         )}
         <FormGroup>
           <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-            Submit
+            Check eligibility
           </Button>
         </FormGroup>
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography variant="h6" component="h2">
+              {eligibility}
+            </Typography>
+            <Box>
+              <Button variant="contained"> Approve </Button>
+              <Button variant="contained"> Decline </Button>
+            </Box>
+          </Box>
+        </Modal>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={backdrop}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
       </form>
     </Box>
-  )
-}
+  );
+};
 
-export default ApplicationForCredit
+export default ApplicationForCredit;

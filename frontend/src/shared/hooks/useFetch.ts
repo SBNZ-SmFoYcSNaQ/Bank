@@ -1,6 +1,7 @@
+import axios from "axios";
 import { useEffect, useState } from "react";
 
-function useFetch<T>(url: string) {
+function useFetch<T extends object>(url: string) {
   const [loading, setLoading] = useState(false);
   const [data, setData] = useState<T | null>(null);  
   const [error, setError] = useState<string | null>(null);
@@ -10,13 +11,13 @@ function useFetch<T>(url: string) {
       setLoading(true);
       setError(null);
       try {
-        const res = await fetch(url);
-        if (!res.ok) {
+        const res = await axios.get<T>(url);
+        if (!res || !res.status.toString().startsWith('2')) {
           console.log("error fetching data");
           setError("error fetching data");
+          return;
         }
-        const resData = await res.json();
-        setData(resData);
+        setData(res.data);
       } catch (err: any) {
         console.log(err.toString());
         setError(err.toString());
@@ -31,6 +32,7 @@ function useFetch<T>(url: string) {
   return {
     loading,
     data,
+    setData,
     error
   }
 }

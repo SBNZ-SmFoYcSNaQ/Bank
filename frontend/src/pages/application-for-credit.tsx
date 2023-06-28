@@ -1,4 +1,20 @@
-import { Autocomplete, Backdrop, Box, Button, Checkbox, CircularProgress, FormControl, FormControlLabel, FormGroup, FormLabel, Modal, Radio, RadioGroup, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Backdrop,
+  Box,
+  Button,
+  Checkbox,
+  CircularProgress,
+  FormControl,
+  FormControlLabel,
+  FormGroup,
+  FormLabel,
+  Modal,
+  Radio,
+  RadioGroup,
+  TextField,
+  Typography,
+} from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
@@ -9,7 +25,7 @@ interface CreditFormValues {
   minRepaymentPeriod: string;
   maxRepaymentPeriod: string;
   areYouEmployed?: boolean;
-  employmentEndDateOption: EmploymentEndDateOptions,
+  employmentEndDateOption: EmploymentEndDateOptions;
   employmentStartDate?: string;
   employmentEndDate?: string;
   salary?: number;
@@ -30,8 +46,8 @@ const initalFormValues: CreditFormValues = {
   employmentEndDateOption: EmploymentEndDateOptions.Indefinite,
   employmentStartDate: "",
   employmentEndDate: "",
-  salary: 0
-}
+  salary: 0,
+};
 
 interface User {
   id: number;
@@ -39,19 +55,20 @@ interface User {
 }
 
 const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
   width: 400,
-  bgcolor: 'background.paper',
-  border: '2px solid #000',
+  bgcolor: "background.paper",
+  border: "2px solid #000",
   boxShadow: 24,
   p: 4,
 };
 
 const ApplicationForCredit = () => {
-  const [formValues, setFormValues] = useState<CreditFormValues>(initalFormValues);
+  const [formValues, setFormValues] =
+    useState<CreditFormValues>(initalFormValues);
   const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
@@ -82,25 +99,25 @@ const ApplicationForCredit = () => {
     event.preventDefault();
     setBackdrop(true);
 
-    const { areYouEmployed, employmentEndDateOption, ...filteredFormValues } = formValues;
+    const { areYouEmployed, employmentEndDateOption, ...filteredFormValues } =
+      formValues;
     console.log(filteredFormValues);
 
     //axios request
 
     setBackdrop(false);
-
   };
 
   useEffect(() => {
-    fetchUsers()
-  }, [])
+    fetchUsers();
+  }, []);
 
   const fetchUsers = async () => {
     try {
       const response = await axios.get(`clients`);
       setUsers(response.data);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     }
   };
 
@@ -115,8 +132,17 @@ const ApplicationForCredit = () => {
             disablePortal
             options={users}
             getOptionLabel={(option) => option.fullName}
-            renderInput={(params) => <TextField {...params} label="Choose client" required />
-            }
+            onChange={(event: any, newValue: User | null) => {
+              setFormValues({ ...formValues, userId: newValue?.id ?? -1 });
+            }}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                name="userId"
+                label="Choose client"
+                required
+              />
+            )}
           />
         </FormControl>
         <FormControl fullWidth margin="normal">
@@ -204,7 +230,8 @@ const ApplicationForCredit = () => {
                 />
               </RadioGroup>
 
-              {formValues.employmentEndDateOption === EmploymentEndDateOptions.SpecificDate && (
+              {formValues.employmentEndDateOption ===
+                EmploymentEndDateOptions.SpecificDate && (
                 <TextField
                   InputLabelProps={{ shrink: true }}
                   name="employmentEndDate"
@@ -249,14 +276,14 @@ const ApplicationForCredit = () => {
           </Box>
         </Modal>
         <Backdrop
-          sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
           open={backdrop}
         >
           <CircularProgress color="inherit" />
         </Backdrop>
       </form>
     </Box>
-  )
-}
+  );
+};
 
-export default ApplicationForCredit
+export default ApplicationForCredit;

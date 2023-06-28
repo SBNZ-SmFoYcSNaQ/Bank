@@ -60,5 +60,8 @@ INSERT INTO bank_account (id, balance, number, bank_card_id, client_id) VALUES
     ('e7a8d7f3-f42d-4a6e-80a9-347c8f892dcd', 40000, '1700032332025', '4a7486ed-ef03-46c4-95b6-c02e57248c20', '42f732e5-1b01-4a01-97a3-3f448d1fda24');
 
 INSERT INTO transaction (id, amount, creation_time, execution_time, location, status, bank_account_id) VALUES
-    ('607db692-13a8-11ee-be56-0242ac120002', 3560, '2023-04-10 10:39:37', '2023-04-11 10:39:37', '212.200.65.93', 1, 'ffa7b032-139f-11ee-be56-0242ac120002'),
+    ('607db692-13a8-11ee-be56-0242ac120002', 3560, '2023-06-28 10:39:37', '2023-04-11 10:39:37', '212.200.65.93', 3, 'ffa7b032-139f-11ee-be56-0242ac120002'),
     ('6e22a872-21d2-4a9d-a2c3-17e485b76dcf', 1500, '2023-04-12 14:20:50', '2023-04-13 14:20:50', '212.200.65.93', 1, 'e702de8a-7e6b-414e-9e96-6282d81d1e12');
+
+INSERT INTO suspicious_transaction (id, message, transaction_id) VALUES
+    ('d3df90a2-1591-11ee-be56-0242ac120002', 'Many transactions from different locations in close time.', '607db692-13a8-11ee-be56-0242ac120002');

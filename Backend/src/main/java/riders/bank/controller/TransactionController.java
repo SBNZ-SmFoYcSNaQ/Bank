@@ -1,21 +1,22 @@
 package riders.bank.controller;
 
+import com.maxmind.geoip2.exception.GeoIp2Exception;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import riders.bank.App;
+import riders.bank.dto.SuspiciousTransactionDTO;
 import riders.bank.dto.TransactionBodyDTO;
-import riders.bank.exception.AmountInBankException;
-import riders.bank.exception.BankAccountNotHaveCardException;
-import riders.bank.exception.BankCardNotExistingExceptions;
-import riders.bank.exception.SuspiciousTransactionException;
+import riders.bank.exception.*;
+import riders.bank.security.AuthUtility;
 import riders.bank.service.TransactionService;
 import riders.bank.utils.LocationUtils;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -55,4 +56,41 @@ public class TransactionController {
             return new ResponseEntity<>(INTERNAL_SERVER_ERROR);
         }
     }
+
+    @GetMapping("/suspicious")
+    @Secured("Client")
+    public ResponseEntity<?> GetSuspicious(HttpServletRequest request) throws IOException, GeoIp2Exception {
+        ArrayList<SuspiciousTransactionDTO> suspiciousTransactionsDTO = transactionService.getAllSuspiciousForClient(AuthUtility.getEmailFromRequest(request));
+        return new ResponseEntity<>(suspiciousTransactionsDTO, OK);
+    }
+
+    @GetMapping("/suspicious/accept/{id}")
+    @Secured("Client")
+    public ResponseEntity<?> AcceptSuspicious(@PathVariable("id") String transactionId) {
+        Map<String, String> responseObject = new HashMap<>();
+        try{
+            transactionService.acceptSuspiciousTransaction(transactionId);
+            return new ResponseEntity<>(OK);
+        } catch(SuspiciousTransactionMissingException e){
+            responseObject.put("error", "Suspicious transaction missing!");
+            return new ResponseEntity<>(responseObject, BAD_REQUEST);
+        } catch (AmountInBankException e) {
+            responseObject.put("error", "You don't have enough money on balance to accept this transaction!");
+            return new ResponseEntity<>(responseObject, BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/suspicious/cancel/{id}")
+    @Secured("Client")
+    public ResponseEntity<?> CancelSuspicious(@PathVariable("id") String transactionId){
+        Map<String, String> responseObject = new HashMap<>();
+        try{
+            transactionService.cancelSuspiciousTransaction(transactionId);
+            return new ResponseEntity<>(OK);
+        } catch(SuspiciousTransactionMissingException e){
+            responseObject.put("error", "Suspicious transaction missing!");
+            return new ResponseEntity<>(responseObject, BAD_REQUEST);
+        }
+    }
+
 }

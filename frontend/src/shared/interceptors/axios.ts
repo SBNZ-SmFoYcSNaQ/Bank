@@ -6,9 +6,9 @@ let refresh = false;
 
 axios.interceptors.response.use(resp => resp, async error => {
 
-    if (error.response.status === 401 && !refresh && !error.request.responseURL.includes('login')) {
+    if (error.response.status === 403 && !refresh && !error.request.responseURL.includes('login')) {
         refresh = true;
-        const response = await axios.post('token/refresh', { withCredentials: true });
+        const response = await axios.post('token/refresh', null, { withCredentials: true });
 
         if (response.status === 200) {
             axios.defaults.headers.common['Authorization'] = `Bearer ${response.data['access_token']}`

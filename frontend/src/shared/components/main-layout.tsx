@@ -4,6 +4,7 @@ import LoginIcon from '@mui/icons-material/Login';
 import HowToRegIcon from '@mui/icons-material/HowToReg';
 import LogoutIcon from '@mui/icons-material/Logout';
 import CreditScoreIcon from '@mui/icons-material/CreditScore';
+import NotificationImportantIcon from '@mui/icons-material/NotificationImportant';
 import { NavLink } from "react-router-dom";
 import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { ToastContainer } from "react-toastify";
@@ -42,6 +43,13 @@ const upperNavItems: NavItem[] = [
     text: "Application For Credit",
     icon: <CreditScoreIcon />,
     route: "/application-for-credit",
+    requireAuth: true,
+    roles: ["CLIENT"]
+  },
+  {
+    text: "Suspicious transactions",
+    icon: <NotificationImportantIcon />,
+    route: "/suspicious-transactions",
     requireAuth: true,
     roles: ["CLIENT"]
   }

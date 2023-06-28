@@ -22,4 +22,11 @@ public class LocationUtils {
         CityResponse cityResponseTwo = dbReader.city(InetAddress.getByName(ipTwo));
         return cityResponseOne.getCountry().getName().equals(cityResponseTwo.getCountry().getName());
     }
+
+    public static String getCityAndCountryName(String location) throws IOException, GeoIp2Exception {
+        InputStream inputStream = App.class.getClassLoader().getResourceAsStream(dbLocation);
+        DatabaseReader dbReader = new DatabaseReader.Builder(inputStream).build();
+        CityResponse cityResponse = dbReader.city(InetAddress.getByName(location));
+        return cityResponse.getCity().getName() + ", "+cityResponse.getCountry().getName();
+    }
 }

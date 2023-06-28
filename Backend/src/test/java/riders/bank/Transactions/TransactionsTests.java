@@ -66,7 +66,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleOne");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many transactions from different locations in close time."));
     }
@@ -78,7 +78,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleOne");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many transactions from different locations in close time."));
     }
@@ -91,7 +91,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleOne");
+        fireRules();
 
         assertTrue(suspiciousMessages.contains("Many transactions from different locations in close time."));
     }
@@ -103,7 +103,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleOne");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many transactions from different locations in close time."));
     }
@@ -120,7 +120,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree, otherTransactionFour, otherTransactionFive, otherTransactionSix);
 
-        fireRules("ruleTwo");
+        fireRules();
 
         assertTrue(suspiciousMessages.contains("Many small transactions in close time."));
     }
@@ -137,7 +137,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree, otherTransactionFour, otherTransactionFive, otherTransactionSix);
 
-        fireRules("ruleTwo");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many small transactions in close time."));
     }
@@ -155,7 +155,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree, otherTransactionFour, otherTransactionFive, otherTransactionSix);
 
-        fireRules("ruleTwo");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many small transactions in close time."));
     }
@@ -172,7 +172,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree, otherTransactionFour, otherTransactionFive, otherTransactionSix);
 
-        fireRules("ruleTwo");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Many small transactions in close time."));
     }
@@ -184,7 +184,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleThree");
+        fireRules();
 
         assertTrue(suspiciousMessages.contains("Transaction from new location."));
     }
@@ -196,7 +196,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction);
 
-        fireRules("ruleThree");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Transaction from new location."));
     }
@@ -208,7 +208,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSessionWithMockedHelperForOddTransaction(specificTransaction, otherTransaction);
 
-        fireRules("ruleFour");
+        fireRules();
 
         assertTrue(suspiciousMessages.contains("Transaction is big and in odd time."));
     }
@@ -220,7 +220,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSessionWithMockedHelperForNormalTransaction(specificTransaction, otherTransaction);
 
-        fireRules("ruleFour");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Transaction is big and in odd time."));
     }
@@ -232,7 +232,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSessionWithMockedHelperForNormalTransaction(specificTransaction, otherTransaction);
 
-        fireRules("ruleFour");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Transaction is big and in odd time."));
     }
@@ -244,7 +244,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSessionWithMockedHelperForNormalTransaction(specificTransaction, otherTransaction);
 
-        fireRules("ruleFour");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Transaction is big and in odd time."));
     }
@@ -258,7 +258,7 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree);
 
-        fireRules("ruleFive");
+        fireRules();
 
         assertTrue(suspiciousMessages.contains("Transaction is much larger than average."));
     }
@@ -272,15 +272,14 @@ public class TransactionsTests {
         setUpGlobalVariables();
         insertFactsIntoSession(specificTransaction, otherTransaction, otherTransactionTwo, otherTransactionThree);
 
-        fireRules("ruleFive");
+        fireRules();
 
         assertFalse(suspiciousMessages.contains("Transaction is much larger than average."));
     }
 
 
 
-    private void fireRules(String agendaGroup){
-        kieSession.getAgenda().getAgendaGroup(agendaGroup).setFocus();
+    private void fireRules(){
         kieSession.fireAllRules();
         kieSession.dispose();
     }

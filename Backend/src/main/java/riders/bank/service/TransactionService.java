@@ -1,23 +1,22 @@
 package riders.bank.service;
 
+import com.maxmind.geoip2.exception.GeoIp2Exception;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.kie.api.runtime.KieContainer;
 import org.kie.api.runtime.KieSession;
 import org.springframework.stereotype.Service;
+import riders.bank.dto.SuspiciousTransactionDTO;
 import riders.bank.dto.TransactionBodyDTO;
-import riders.bank.exception.AmountInBankException;
-import riders.bank.exception.BankAccountNotHaveCardException;
-import riders.bank.exception.BankCardNotExistingExceptions;
-import riders.bank.exception.SuspiciousTransactionException;
-import riders.bank.model.BankAccount;
-import riders.bank.model.BankCard;
-import riders.bank.model.SuspiciousTransaction;
-import riders.bank.model.Transaction;
+import riders.bank.exception.*;
+import riders.bank.model.*;
 import riders.bank.repository.TransactionRepository;
+import riders.bank.utils.LocationUtils;
 import riders.bank.utils.helpers.TransactionsHelper;
 
+import java.io.IOException;
+import java.io.ObjectInputFilter;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.LocalDateTime;
@@ -32,6 +31,7 @@ public class TransactionService {
     private final BankCardService bankCardService;
     private final BankAccountService bankAccountService;
     private final SuspiciousTransactionService suspiciousTransactionService;
+    private final UserService userService;
     private final KieContainer kieContainer;
     public void makeTransaction(TransactionBodyDTO transactionBodyDTO, String clientLocation) throws BankCardNotExistingExceptions, BankAccountNotHaveCardException, AmountInBankException, SuspiciousTransactionException {
         BankCard bankCard = checkBankCardDetails(transactionBodyDTO);
@@ -66,6 +66,8 @@ public class TransactionService {
             suspiciousTransaction.setMessage(messageToAdd);
             suspiciousTransaction.setTransaction(specificTransaction);
             suspiciousTransactionService.Create(suspiciousTransaction);
+            specificTransaction.setStatus(Transaction.Status.SUSPICIOUS);
+            transactionRepository.save(specificTransaction);
             throw new SuspiciousTransactionException();
         }
     }
@@ -90,5 +92,59 @@ public class TransactionService {
 
     private BankAccount checkBankAccountDetails(BankCard bankCard) throws BankAccountNotHaveCardException {
         return bankAccountService.getByBankCard(bankCard);
+    }
+
+    public ArrayList<SuspiciousTransactionDTO> getAllSuspiciousForClient(String emailFromRequest) throws IOException, GeoIp2Exception {
+        Client client = (Client) userService.getUserBy(emailFromRequest);
+        ArrayList<BankAccount> clientBankAccounts = bankAccountService.getByClient(client);
+        if(clientBankAccounts.isEmpty())
+            return new ArrayList<>();
+        ArrayList<Transaction> transactionsToReturn = new ArrayList<>();
+        for (BankAccount account:clientBankAccounts) {
+            transactionsToReturn.addAll(transactionRepository.findAllByBankAccountAndStatus(account, Transaction.Status.SUSPICIOUS));
+        }
+        ArrayList<SuspiciousTransaction> suspiciousTransactions = new ArrayList<>();
+        for(Transaction transaction : transactionsToReturn){
+            suspiciousTransactions.addAll(suspiciousTransactionService.getByTransaction(transaction));
+        }
+        ArrayList<SuspiciousTransactionDTO> suspiciousTransactionDTOs = new ArrayList<>();
+        for(SuspiciousTransaction transaction : suspiciousTransactions){
+            suspiciousTransactionDTOs.add(createSuspiciousTransactionDTOFromObject(transaction));
+        }
+        return suspiciousTransactionDTOs;
+
+    }
+
+    private SuspiciousTransactionDTO createSuspiciousTransactionDTOFromObject(SuspiciousTransaction transaction) throws IOException, GeoIp2Exception {
+        SuspiciousTransactionDTO dto = new SuspiciousTransactionDTO();
+        dto.setId(transaction.getId());
+        dto.setAmount(transaction.getTransaction().getAmount());
+        dto.setCreationTime(transaction.getTransaction().getCreationTime());
+        dto.setLocation(LocationUtils.getCityAndCountryName(transaction.getTransaction().getLocation()));
+        dto.setBankAccountNumber(transaction.getTransaction().getBankAccount().getNumber());
+        dto.setMessage(transaction.getMessage());
+        return dto;
+    }
+
+    public void acceptSuspiciousTransaction(String transactionId) throws SuspiciousTransactionMissingException, AmountInBankException {
+        SuspiciousTransaction suspiciousTransaction = suspiciousTransactionService.getById(transactionId);
+        Double amount = suspiciousTransaction.getTransaction().getBankAccount().getBalance() - suspiciousTransaction.getTransaction().getAmount();
+        if(amount < 0)
+            throw new AmountInBankException();
+        BankAccount bankAccount = suspiciousTransaction.getTransaction().getBankAccount();
+        bankAccount.setBalance(bankAccount.getBalance() - suspiciousTransaction.getTransaction().getAmount());
+        bankAccountService.save(bankAccount);
+        Transaction transaction = suspiciousTransaction.getTransaction();
+        transaction.setStatus(Transaction.Status.ACCEPTED);
+        transactionRepository.save(transaction);
+        suspiciousTransactionService.delete(suspiciousTransaction);
+    }
+
+    public void cancelSuspiciousTransaction(String transactionId) throws SuspiciousTransactionMissingException {
+        SuspiciousTransaction suspiciousTransaction = suspiciousTransactionService.getById(transactionId);
+        Transaction transaction = suspiciousTransaction.getTransaction();
+        transaction.setStatus(Transaction.Status.REJECTED);
+        transactionRepository.save(transaction);
+        suspiciousTransactionService.delete(suspiciousTransaction);
     }
 }

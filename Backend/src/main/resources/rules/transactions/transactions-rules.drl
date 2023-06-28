@@ -11,7 +11,6 @@ global riders.bank.model.Client specificClient;
 global java.util.ArrayList<String> suspiciousMessages;
 
 rule "Rule [Many transactions from different locations in close time]"
-agenda-group "ruleOne"
 salience 50
 no-loop true
 when
@@ -27,7 +26,6 @@ then
 end;
 
 rule "Rule [Many small transactions in close time]"
-agenda-group "ruleTwo"
 salience 45
 no-loop true
 when
@@ -43,7 +41,6 @@ then
 end;
 
 rule "Rule [Transactions from new location]"
-agenda-group "ruleThree"
 salience 40
 no-loop true
 when
@@ -59,7 +56,6 @@ then
 end;
 
 rule "Rule [Big transaction in odd time]"
-agenda-group "ruleFour"
 salience 35
 no-loop true
 when
@@ -73,7 +69,6 @@ then
 end;
 
 rule "Rule [Oddly big transaction than usually]"
-agenda-group "ruleFive"
 salience 30
 no-loop true
 when

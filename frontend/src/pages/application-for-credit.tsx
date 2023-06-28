@@ -73,6 +73,7 @@ const ApplicationForCredit = () => {
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [eligibility, setEligibility] = useState("");
+  const [creditId, setCreditId] = useState<string | null>(null);
 
   const handleOpen = () => setOpen(true);
 
@@ -93,11 +94,12 @@ const ApplicationForCredit = () => {
 
     const { areYouEmployed, employmentEndDateOption, ...filteredFormValues } =
       formValues;
-    console.log(filteredFormValues);
 
     try {
       const response = await axios.post(`credit`, filteredFormValues);
-      console.log(response);
+      setEligibility(response.data.recommended ? "true" : "false");
+      setCreditId(response.data.creditId);
+      setOpen(true);
     } catch (error) {
       console.log(error);
     }
@@ -115,6 +117,24 @@ const ApplicationForCredit = () => {
       setUsers(response.data);
     } catch (error) {
       console.error("Error fetching users:", error);
+    }
+  };
+
+  const approve = async () => {
+    try {
+      await axios.put(`credit/approve/${creditId}`, creditId);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const decline = async () => {
+    try {
+      await axios.put(`credit/reject/${creditId}`);
+      setOpen(false);
+    } catch (error) {
+      console.log(error);
     }
   };
 
@@ -264,11 +284,17 @@ const ApplicationForCredit = () => {
         >
           <Box sx={style}>
             <Typography variant="h6" component="h2">
-              {eligibility}
+              Is recommended: {eligibility}
             </Typography>
             <Box>
-              <Button variant="contained"> Approve </Button>
-              <Button variant="contained"> Decline </Button>
+              <Button variant="contained" onClick={approve}>
+                {" "}
+                Approve{" "}
+              </Button>
+              <Button variant="contained" onClick={decline}>
+                {" "}
+                Decline{" "}
+              </Button>
             </Box>
           </Box>
         </Modal>

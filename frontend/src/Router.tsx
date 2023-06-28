@@ -6,6 +6,7 @@ import Home from "./pages/home";
 import BankAccount from "./pages/bank-account";
 import Register from "./pages/register";
 import ApplicationForCredit from "./pages/application-for-credit";
+import SuspictiousTransactionsPage from "./pages/suspicious-transactions";
 
 const Router = createBrowserRouter([
   {
@@ -32,6 +33,10 @@ const Router = createBrowserRouter([
       {
         path: "application-for-credit",
         element: <ApplicationForCredit />
+      },
+      {
+        path: "suspicious-transactions",
+        element: <SuspictiousTransactionsPage />
       }
     ]
   }

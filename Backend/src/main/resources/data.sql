@@ -13,16 +13,16 @@ VALUES
 
 INSERT INTO bank_card (id, cvv_cvc, expiration_date, number, owner_name)
 VALUES
-    ('1e8ce8c9-4df1-42dd-a1e3-7929350518c3', '456', '2024-09-15 15:30:22', '6011111111111117', 'Client Client'),
-    ('b56ef3be-37e6-4c2b-a73f-5234627edf8a', '789', '2023-12-31 08:45:10', '3547238487657541', 'Client3 Client3'),
-    ('15bcab46-2a59-4be2-92c2-5fc61ff29a8c', '123', '2025-06-20 12:15:47', '5105105105105100', 'Client Client'),
-    ('bae836f1-59e1-482c-a826-4d3a3a7c9fb2', '890', '2026-03-05 18:20:55', '378734493671000', 'Client3 Client3'),
-    ('1bfc1842-9d8c-4e02-a29d-587a5fbbd11e', '234', '2024-07-29 09:55:33', '3566002020360505', 'Client4 Client4'),
-    ('92f4b0de-dfa6-41e4-b7d7-1a649268d137', '567', '2023-11-12 14:25:19', '5555555555554444', 'Client Client'),
-    ('e8b4d9da-9f08-4e82-8b20-9982ef88a04e', '901', '2025-02-18 07:35:41', '6759649826438453', 'Client Client'),
-    ('4a7486ed-ef03-46c4-95b6-c02e57248c20', '234', '2026-08-08 16:50:12', '4111111111111111', 'Client5 Client5'),
-    ('07e8e1a1-6e3d-4a03-81f4-b3086a99e09e', '345', '2024-05-06 11:40:29', '6011000990139424', 'Client Client'),
-    ('dcd90a3e-ebd6-4b3e-918f-69e275d06ef9', '678', '2023-10-22 13:05:58', '3530111333300000', 'Client6 Client6');
+    ('1e8ce8c9-4df1-42dd-a1e3-7929350518c3', '456', '2024-09-15', '6011111111111117', 'Client Client'),
+    ('b56ef3be-37e6-4c2b-a73f-5234627edf8a', '789', '2023-12-31', '3547238487657541', 'Client3 Client3'),
+    ('15bcab46-2a59-4be2-92c2-5fc61ff29a8c', '123', '2025-06-20', '5105105105105100', 'Client Client'),
+    ('bae836f1-59e1-482c-a826-4d3a3a7c9fb2', '890', '2026-03-05', '378734493671000', 'Client3 Client3'),
+    ('1bfc1842-9d8c-4e02-a29d-587a5fbbd11e', '234', '2024-07-29', '3566002020360505', 'Client4 Client4'),
+    ('92f4b0de-dfa6-41e4-b7d7-1a649268d137', '567', '2023-11-12', '5555555555554444', 'Client Client'),
+    ('e8b4d9da-9f08-4e82-8b20-9982ef88a04e', '901', '2025-02-18', '6759649826438453', 'Client Client'),
+    ('4a7486ed-ef03-46c4-95b6-c02e57248c20', '234', '2026-08-08', '4111111111111111', 'Client5 Client5'),
+    ('07e8e1a1-6e3d-4a03-81f4-b3086a99e09e', '345', '2024-05-06', '6011000990139424', 'Client Client'),
+    ('dcd90a3e-ebd6-4b3e-918f-69e275d06ef9', '678', '2023-10-22', '3530111333300000', 'Client6 Client6');
 
 INSERT INTO credit (id, amount, payments_number, maximum_repayment_period, minimum_repayment_period, status) VALUES
     ('7914c91a-139f-11ee-be56-0242ac120002', 350000, 24, '2026-04-10 10:39:37', '2024-04-10 10:39:37', 1),
@@ -52,7 +52,7 @@ VALUES
     ('77a3ef56-41ae-4c77-b9c6-95e6ee71d5bc', '2026-04-30 11:00:00', '2022-04-30 11:00:00', 42000);
 
 INSERT INTO bank_account (id, balance, number, bank_card_id, client_id) VALUES
-    ('ffa7b032-139f-11ee-be56-0242ac120002', 20000, '1700032332018', '1e8ce8c9-4df1-42dd-a1e3-7929350518c3', '42f732e5-1b01-4a01-97a3-3f448d1fda24'),
+    ('ffa7b032-139f-11ee-be56-0242ac120002', 2000, '1700032332018', '1e8ce8c9-4df1-42dd-a1e3-7929350518c3', '42f732e5-1b01-4a01-97a3-3f448d1fda24'),
     ('e702de8a-7e6b-414e-9e96-6282d81d1e12', 15000, '1700032332019', 'b56ef3be-37e6-4c2b-a73f-5234627edf8a', '42f732e5-1b01-4a01-97a3-3f448d1fda24'),
     ('fd20e2d6-1df2-4a5f-b5c4-b5d881aaf846', 50000, '1700032332020', '15bcab46-2a59-4be2-92c2-5fc61ff29a8c', 'de21c32e-ebf8-49f4-97ef-721e4f5ed313'),
     ('105f2f3f-3db1-4b46-bc43-05b5e4e95b81', 100000, '1700032332021', 'bae836f1-59e1-482c-a826-4d3a3a7c9fb2', '42f732e5-1b01-4a01-97a3-3f448d1fda24'),
@@ -60,5 +60,8 @@ INSERT INTO bank_account (id, balance, number, bank_card_id, client_id) VALUES
     ('e7a8d7f3-f42d-4a6e-80a9-347c8f892dcd', 40000, '1700032332025', '4a7486ed-ef03-46c4-95b6-c02e57248c20', '42f732e5-1b01-4a01-97a3-3f448d1fda24');
 
 INSERT INTO transaction (id, amount, creation_time, execution_time, location, status, bank_account_id) VALUES
-    ('607db692-13a8-11ee-be56-0242ac120002', 3560, '2023-04-10 10:39:37', '2023-04-11 10:39:37', 'Novi Sad', 1, 'ffa7b032-139f-11ee-be56-0242ac120002'),
-    ('6e22a872-21d2-4a9d-a2c3-17e485b76dcf', 1500, '2023-04-12 14:20:50', '2023-04-13 14:20:50', 'Belgrade', 1, 'e702de8a-7e6b-414e-9e96-6282d81d1e12');
+    ('607db692-13a8-11ee-be56-0242ac120002', 3560, '2023-06-28 10:39:37', '2023-04-11 10:39:37', '212.200.65.93', 3, 'ffa7b032-139f-11ee-be56-0242ac120002'),
+    ('6e22a872-21d2-4a9d-a2c3-17e485b76dcf', 1500, '2023-04-12 14:20:50', '2023-04-13 14:20:50', '212.200.65.93', 1, 'e702de8a-7e6b-414e-9e96-6282d81d1e12');
+
+INSERT INTO suspicious_transaction (id, message, transaction_id) VALUES
+    ('d3df90a2-1591-11ee-be56-0242ac120002', 'Many transactions from different locations in close time.', '607db692-13a8-11ee-be56-0242ac120002');

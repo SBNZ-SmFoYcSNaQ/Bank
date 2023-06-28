@@ -76,6 +76,7 @@ public class SecurityConfig {
                 "/api/login",
                 "/api/token/refresh",
                 "/api/register",
+                "/api/transaction",
                 "/api/logout"
         ).permitAll();
         httpSecurity.authorizeHttpRequests().anyRequest().authenticated();

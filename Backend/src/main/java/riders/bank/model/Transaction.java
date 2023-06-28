@@ -27,7 +27,7 @@ public class Transaction {
     private double amount;
     private LocalDateTime creationTime;
     private LocalDateTime executionTime;
-    @OneToOne(optional = false)
+    @ManyToOne(optional = false)
     private BankAccount bankAccount;
     private String location;
 }

@@ -1,5 +1,6 @@
 package riders.bank.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -23,5 +24,6 @@ public class BankAccount {
     @OneToOne(cascade = CascadeType.REMOVE, optional = false)
     private BankCard bankCard;
     @ManyToOne
+    @JsonBackReference
     private Client client;
 }

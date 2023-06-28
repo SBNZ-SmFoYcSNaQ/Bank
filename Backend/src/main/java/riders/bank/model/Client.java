@@ -1,5 +1,7 @@
 package riders.bank.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
@@ -17,5 +19,6 @@ import java.util.List;
 @DiscriminatorValue("client")
 public class Client extends User {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
+    @JsonManagedReference
     private List<BankAccount> bankAccounts;
 }

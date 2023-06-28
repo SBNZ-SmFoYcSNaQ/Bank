@@ -87,15 +87,7 @@ const ApplicationForCredit = () => {
     }));
   };
 
-  // const handleUserChange = () => {
-  //   setFormValues((prevValues) => ({
-  //     ...prevValues,
-  //     userId: value.userId
-  //   }));
-
-  // }
-
-  const handleSubmit = (event: React.FormEvent) => {
+  const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
     setBackdrop(true);
 
@@ -103,7 +95,12 @@ const ApplicationForCredit = () => {
       formValues;
     console.log(filteredFormValues);
 
-    //axios request
+    try {
+      const response = await axios.post(`credit`, filteredFormValues);
+      console.log(response);
+    } catch (error) {
+      console.log(error);
+    }
 
     setBackdrop(false);
   };

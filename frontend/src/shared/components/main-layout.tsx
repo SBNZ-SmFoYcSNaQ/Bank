@@ -44,7 +44,7 @@ const upperNavItems: NavItem[] = [
     icon: <CreditScoreIcon />,
     route: "/application-for-credit",
     requireAuth: true,
-    roles: ["CLIENT"]
+    roles: ["BANKING_OFFICER"]
   },
   {
     text: "Suspicious transactions",

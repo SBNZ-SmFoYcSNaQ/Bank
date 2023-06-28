@@ -1,0 +1,65 @@
+package com.sample.rules;
+
+import riders.bank.model.Credit;
+import riders.bank.model.Client;
+
+query suitableMatch(String $candidateName, String $position)
+    credit: Credit() and
+
+    fulfilsIncomeRequirement() and
+
+    $jobOffer: JobOffer( $position; ) and
+    $candidate: Candidate( $candidateName; ) and
+    fulfilsEducationRequirement( $candidateName, $position; ) and
+    fulfilsSkillsRequirement( $candidateName, $position; )
+end
+
+query fulfilsIncomeRequirement(Credit $credit)
+    $client: Client()
+    eval($credit.employmentInfo.salary > 0)
+end
+
+
+
+query isClientInRiskGroup( Client $client )
+
+end
+
+// za obrazovanje treba da ispuni barem jedan od uslova te pozicije za posao
+query fulfilsEducationRequirement( String $candidateName, String $position )
+    noRequirements( $position, RequirementType.EDUCATION; ) or
+    (
+        $c: Candidate( $candidateName; ) and
+        $r: Requirement( $position, RequirementType.EDUCATION; ) and
+        Number(intValue > 0) from accumulate(
+            String($e: this, $r.requirements contains this)
+            from $c.education,
+            count($e)
+        )
+    )
+end
+
+// za vestine treba da ispuni sve uslove te pozicije za posao
+query fulfilsSkillsRequirement( String $candidateName, String $position )
+    noRequirements( $position, RequirementType.SKILLS; ) or
+    (
+        $c: Candidate( $candidateName; ) and
+        $r: Requirement( $position, RequirementType.SKILLS; ) and
+        Number(intValue == $r.requirements.size()) from accumulate(
+            String($e: this, $r.requirements contains this)
+            from $c.skills,
+            count($e)
+        )
+    )
+end
+
+query noRequirements( String $position, RequirementType $type )
+    not(exists(Requirement( $position, $type; )))
+end
+
+rule "find suitable job candidates"
+when
+    suitableMatch( $name, $position; )
+then
+    System.out.println("Candidate " + $name + " is suitable for position " + $position);
+end

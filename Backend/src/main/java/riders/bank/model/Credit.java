@@ -31,4 +31,8 @@ public class Credit {
     private LocalDateTime minimumRepaymentPeriod;
     private LocalDateTime maximumRepaymentPeriod;
     private Status status;
+    @OneToOne(cascade = CascadeType.REMOVE)
+    private EmploymentInfo employmentInfo;
+    @ManyToOne
+    private Client client;
 }

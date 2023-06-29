@@ -5,6 +5,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import riders.bank.App;
@@ -13,7 +14,6 @@ import riders.bank.dto.TransactionBodyDTO;
 import riders.bank.exception.*;
 import riders.bank.security.AuthUtility;
 import riders.bank.service.TransactionService;
-import riders.bank.utils.LocationUtils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -58,14 +58,14 @@ public class TransactionController {
     }
 
     @GetMapping("/suspicious")
-    @Secured("Client")
+    @Secured("CLIENT")
     public ResponseEntity<?> GetSuspicious(HttpServletRequest request) throws IOException, GeoIp2Exception {
         ArrayList<SuspiciousTransactionDTO> suspiciousTransactionsDTO = transactionService.getAllSuspiciousForClient(AuthUtility.getEmailFromRequest(request));
         return new ResponseEntity<>(suspiciousTransactionsDTO, OK);
     }
 
     @GetMapping("/suspicious/accept/{id}")
-    @Secured("Client")
+    @Secured("CLIENT")
     public ResponseEntity<?> AcceptSuspicious(@PathVariable("id") String transactionId) {
         Map<String, String> responseObject = new HashMap<>();
         try{
@@ -81,7 +81,7 @@ public class TransactionController {
     }
 
     @GetMapping("/suspicious/cancel/{id}")
-    @Secured("Client")
+    @Secured("CLIENT")
     public ResponseEntity<?> CancelSuspicious(@PathVariable("id") String transactionId){
         Map<String, String> responseObject = new HashMap<>();
         try{

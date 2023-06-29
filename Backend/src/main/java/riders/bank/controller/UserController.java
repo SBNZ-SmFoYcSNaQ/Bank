@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -78,7 +79,7 @@ public class UserController {
     }
 
     @GetMapping("/clients")
-    @Secured({"BANKING_OFFICER"})
+    @Secured("BANKING_OFFICER")
     public ResponseEntity<?> getClientsDTOs() {
         return new ResponseEntity<>(userService.getAllClientDTOs(), OK);
     }

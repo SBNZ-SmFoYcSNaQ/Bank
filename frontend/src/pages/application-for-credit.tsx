@@ -73,7 +73,7 @@ const ApplicationForCredit = () => {
   const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
-  const [eligibility, setEligibility] = useState("");
+  const [eligibility, setEligibility] = useState(false);
   const [creditId, setCreditId] = useState<string | null>(null);
   const [userFullName, setUserFullName] = useState("");
 
@@ -95,7 +95,7 @@ const ApplicationForCredit = () => {
 
     try {
       const response = await axios.post(`credit`, filteredFormValues);
-      setEligibility(response.data.recommended ? "true" : "false");
+      setEligibility(response.data.recommended);
       setCreditId(response.data.creditId);
       setOpen(true);
     } catch (error) {
@@ -288,10 +288,10 @@ const ApplicationForCredit = () => {
               component="h2"
               sx={{
                 pb: 2,
-                color: eligibility ? "red" : "green",
+                color: eligibility ? "green" : "red",
               }}
             >
-              System concluded that the {userFullName} is {eligibility ? "not eligible" : "eligible"} for a credit
+              System concluded that the {userFullName} is {eligibility ? "eligible" : "not eligible"} for a credit
             </Typography>
             <Box sx={{ display: "flex", justifyContent: "flex-end", gap: "10px", pt: 2 }}>
               <Button variant="contained" onClick={approve}>

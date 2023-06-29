@@ -21,4 +21,7 @@ public class Client extends User {
     @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
     @JsonManagedReference
     private List<BankAccount> bankAccounts;
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "client")
+    @JsonManagedReference
+    private List<Credit> credits;
 }

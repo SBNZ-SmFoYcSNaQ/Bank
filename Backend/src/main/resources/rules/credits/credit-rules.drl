@@ -3,34 +3,52 @@ package com.sample.rules;
 import riders.bank.model.Credit;
 import riders.bank.model.Client;
 import java.time.LocalDate;
+import java.util.List;
+
+global riders.bank.model.Credit specificCredit;
 
 query suitableMatch( Credit $credit )
+    hasRepaymentPeriod ( $credit; ) and
     fulfilsStableIncomeRequirement ( $credit; ) and
     fulfilsIncomeSizeRequirement( $credit; ) and
-    isClientNotInRiskGroup ( $credit; )
+    isClientNotInRiskGroup ( $credit; ) and
+    fulfilsMaximumCreditsNumber ( $credit; ) and
+    hasPaidOffCredit()
+end
+
+query hasRepaymentPeriod( Credit $credit )
+    eval($credit.getMinimumRepaymentPeriod() != null) and eval($credit.getMaximumRepaymentPeriod() != null)
 end
 
 query fulfilsStableIncomeRequirement( Credit $credit )
-    eval($credit.getEmploymentInfo().getEmploymentEndDate().isAfter($credit.getMaximumRepaymentPeriod()))
+    eval($credit.getEmploymentInfo().getEmploymentEndDate() == null) or (eval($credit.getEmploymentInfo().getEmploymentEndDate() != null) and
+    eval($credit.getEmploymentInfo().getEmploymentEndDate().isAfter($credit.getMaximumRepaymentPeriod())))
 end
 
 query fulfilsIncomeSizeRequirement( Credit $credit )
     eval($credit.getEmploymentInfo().getSalary() >= 0.5 * $credit.getAmount())
 end
 
+query fulfilsMaximumCreditsNumber( Credit $credit )
+    List(size < 3) from collect(Credit (getStatus() == Status.IN_PROGRESS))
+end
+
 query isClientNotInRiskGroup( Credit $credit )
+    (eval($credit.getClient().getBirthdate().isBefore(LocalDate.now().minusYears(65))) and
+    eval($credit.getMaximumRepaymentPeriod().isBefore(LocalDate.now().plusYears(3)))) or
     eval($credit.getClient().getBirthdate().isAfter(LocalDate.now().minusYears(65)))
 end
 
-
-//query hasRepaymentPeriod( Credit $credit )
-//    eval($credit.getMinimumRepaymentPeriod() != null && $credit.getMaximumRepaymentPeriod != null)
-//end
+query hasPaidOffCredit()
+    Credit(
+        getStatus() == Status.PAID_OFF
+    )
+end
 
 rule "is client suitable for credit"
 no-loop true
 when
-    $credit: Credit()
+    $credit: Credit(id == specificCredit.getId())
     suitableMatch( $credit; )
 then
     System.out.println("Client " + $credit.getClient() + " is suitable");

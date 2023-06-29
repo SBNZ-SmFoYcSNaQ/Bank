@@ -15,6 +15,7 @@ import riders.bank.repository.ClientRepository;
 import riders.bank.repository.CreditRepository;
 import riders.bank.repository.EmploymentInfoRepository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -61,6 +62,11 @@ public class CreditService {
 
     public Boolean recommendCredit(Credit credit){
         KieSession kieSession = kieContainerCredit.newKieSession();
+        List<Credit> credits = creditRepository.findAllByClient(credit.getClient());
+        for (Credit creditIter:credits) {
+            kieSession.insert(creditIter);
+        }
+        kieSession.setGlobal("specificCredit", credit);
         kieSession.insert(credit);
         kieSession.fireAllRules();
         System.out.println("IS RECOMMENDED: " + credit.isRecommended());

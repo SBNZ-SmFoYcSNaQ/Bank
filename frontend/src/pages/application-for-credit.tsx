@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 interface CreditFormValues {
   userId: number;
@@ -74,10 +75,7 @@ const ApplicationForCredit = () => {
   const [users, setUsers] = useState<User[]>([]);
   const [eligibility, setEligibility] = useState("");
   const [creditId, setCreditId] = useState<string | null>(null);
-
-  const handleOpen = () => setOpen(true);
-
-  const handleClose = () => setOpen(false);
+  const [userFullName, setUserFullName] = useState("");
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value, type, checked } = event.target;
@@ -123,18 +121,20 @@ const ApplicationForCredit = () => {
   const approve = async () => {
     try {
       await axios.put(`credit/approve/${creditId}`, creditId);
-      setOpen(false);
     } catch (error) {
-      console.log(error);
+      toast.error("Oops! Something went wrong. Please try again later.");
+    } finally {
+      setOpen(false);
     }
   };
 
-  const decline = async () => {
+  const reject = async () => {
     try {
       await axios.put(`credit/reject/${creditId}`);
-      setOpen(false);
     } catch (error) {
-      console.log(error);
+      toast.error("Oops! Something went wrong. Please try again later.");
+    } finally {
+      setOpen(false);
     }
   };
 
@@ -151,6 +151,7 @@ const ApplicationForCredit = () => {
             getOptionLabel={(option) => option.fullName}
             onChange={(event: any, newValue: User | null) => {
               setFormValues({ ...formValues, userId: newValue?.id ?? -1 });
+              setUserFullName(newValue?.fullName ?? '');
             }}
             renderInput={(params) => (
               <TextField
@@ -249,15 +250,15 @@ const ApplicationForCredit = () => {
 
               {formValues.employmentEndDateOption ===
                 EmploymentEndDateOptions.SpecificDate && (
-                <TextField
-                  InputLabelProps={{ shrink: true }}
-                  name="employmentEndDate"
-                  type="date"
-                  value={formValues.employmentEndDate}
-                  onChange={handleChange}
-                  required
-                />
-              )}
+                  <TextField
+                    InputLabelProps={{ shrink: true }}
+                    name="employmentEndDate"
+                    type="date"
+                    value={formValues.employmentEndDate}
+                    onChange={handleChange}
+                    required
+                  />
+                )}
             </FormControl>
             <FormControl fullWidth margin="normal">
               <TextField
@@ -278,22 +279,26 @@ const ApplicationForCredit = () => {
         </FormGroup>
         <Modal
           open={open}
-          onClose={handleClose}
           aria-labelledby="modal-modal-title"
           aria-describedby="modal-modal-description"
         >
           <Box sx={style}>
-            <Typography variant="h6" component="h2">
-              Is recommended: {eligibility}
+            <Typography
+              variant="h6"
+              component="h2"
+              sx={{
+                pb: 2,
+                color: eligibility ? "red" : "green",
+              }}
+            >
+              System concluded that the {userFullName} is {eligibility ? "not eligible" : "eligible"} for a credit
             </Typography>
-            <Box>
+            <Box sx={{ display: "flex", justifyContent: "flex-end", gap: "10px", pt: 2 }}>
               <Button variant="contained" onClick={approve}>
-                {" "}
-                Approve{" "}
+                Approve
               </Button>
-              <Button variant="contained" onClick={decline}>
-                {" "}
-                Decline{" "}
+              <Button variant="contained" onClick={reject}>
+                Reject
               </Button>
             </Box>
           </Box>

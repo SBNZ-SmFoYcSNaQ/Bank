@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -26,7 +27,7 @@ public class UserBankAccountController {
     private final UserBankAccountService userBankAccountService;
 
     @PostMapping("/users/me/bankaccounts/add")
-    @Secured("Client")
+    @Secured("CLIENT")
     public ResponseEntity<CreateBankAccountResponse> CreateBankAccount(HttpServletRequest request) {
         BankAccount bankAccount;
         try {
@@ -44,7 +45,7 @@ public class UserBankAccountController {
     }
 
     @GetMapping("/users/me/bankaccounts")
-    @Secured("Client")
+    @Secured("CLIENT")
     public ResponseEntity<List<BankAccount>> GetBankAccounts(HttpServletRequest request) {
         List<BankAccount> bankAccounts;
         try {
